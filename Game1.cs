@@ -15,6 +15,7 @@ namespace Arkanoid
 
         private Paddle paddle;
         private Wall wall;
+        private GameBorder gameBorder;
         private int screenWidth = 0;
         private int screenHeight = 0;
 
@@ -64,6 +65,7 @@ namespace Arkanoid
             int paddleY = (screenHeight - 100);
             paddle = new Paddle(paddleX, paddleY, screenWidth, spriteBatch, gameContent);
             wall = new Wall(1, 50, spriteBatch, gameContent);
+            gameBorder = new GameBorder(screenWidth, screenHeight, spriteBatch, gameContent);
         }
 
         /// <summary>
@@ -102,6 +104,7 @@ namespace Arkanoid
             spriteBatch.Begin();
             paddle.Draw();
             wall.Draw();
+            gameBorder.Draw();
             spriteBatch.End(); 
             base.Draw(gameTime);
         }
