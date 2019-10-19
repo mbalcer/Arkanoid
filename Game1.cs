@@ -13,6 +13,11 @@ namespace Arkanoid
         SpriteBatch spriteBatch;
         GameContent gameContent;
 
+        private Paddle paddle;
+        private Wall wall;
+        private int screenWidth = 0;
+        private int screenHeight = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -43,6 +48,22 @@ namespace Arkanoid
 
             // TODO: use this.Content to load your game content here
             gameContent = new GameContent(Content);
+
+            screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            if (screenWidth >= 502)
+                screenWidth = 502;
+            if (screenHeight >= 700)
+                screenHeight = 700;
+
+            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = screenHeight;
+            graphics.ApplyChanges();
+
+            int paddleX = (screenWidth - gameContent.imgPaddle.Width) / 2;
+            int paddleY = (screenHeight - 100);
+            paddle = new Paddle(paddleX, paddleY, screenWidth, spriteBatch, gameContent);
+            wall = new Wall(1, 50, spriteBatch, gameContent);
         }
 
         /// <summary>
@@ -75,10 +96,13 @@ namespace Arkanoid
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            paddle.Draw();
+            wall.Draw();
+            spriteBatch.End(); 
             base.Draw(gameTime);
         }
     }
