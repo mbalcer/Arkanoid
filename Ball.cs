@@ -74,6 +74,7 @@ namespace Arkanoid
             {
                 return;  //ball already exists, ignore 
             }
+            PlaySound(gameContent.startSound);
             Visible = true;
             X = x;
             Y = y;
@@ -95,21 +96,25 @@ namespace Arkanoid
             {
                 X = 1;
                 XVelocity = XVelocity * -1;
+                PlaySound(gameContent.wallBounceSound);
             }
             if (X > ScreenWidth - Width + 5)
             {
                 X = ScreenWidth - Width + 5;
                 XVelocity = XVelocity * -1;
+                PlaySound(gameContent.wallBounceSound);
             }
             if (Y < 1)
             {
                 Y = 1;
                 YVelocity = YVelocity * -1;
+                PlaySound(gameContent.wallBounceSound);
             }
             if (Y + Height > ScreenHeight)
             {
                 Visible = false;
                 Y = 0;
+                PlaySound(gameContent.missSound);
                 return false;
             }
             //check for paddle hit
@@ -119,6 +124,7 @@ namespace Arkanoid
             Rectangle ballRect = new Rectangle((int)X, (int)Y, (int)Width, (int)Height);
             if (HitTest(paddleRect, ballRect))
             {
+                PlaySound(gameContent.paddleBounceSound);
                 int offset = Convert.ToInt32((paddle.Width - (paddle.X + paddle.Width - X + Width / 2)));
                 offset = offset / 5;
                 if (offset < 0)
@@ -181,6 +187,7 @@ namespace Arkanoid
                             Rectangle brickRect = new Rectangle((int)brick.X, (int)brick.Y, (int)brick.Width, (int)brick.Height);
                             if (HitTest(ballRect, brickRect))
                             {
+                                PlaySound(gameContent.brickSound);
                                 brick.Visible = false;
                                 Score = Score + 7 - i;
                                 YVelocity = YVelocity * -1;
@@ -205,5 +212,13 @@ namespace Arkanoid
                 return false;
             }
         }
+        public static void PlaySound(SoundEffect sound)
+        {
+            float volume = 1;
+            float pitch = 0.0f;
+            float pan = 0.0f;
+            sound.Play(volume, pitch, pan);
+        }
+
     }
 }
