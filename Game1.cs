@@ -18,6 +18,8 @@ namespace Arkanoid
         private GameBorder gameBorder;
         private int screenWidth = 0;
         private int screenHeight = 0;
+        private MouseState oldMouseState;
+        private KeyboardState oldKeyboardState;
 
         public Game1()
         {
@@ -84,14 +86,43 @@ namespace Arkanoid
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (IsActive == false)
+            {
+                return;  //our window is not active don't update
+            }
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+            KeyboardState newKeyboardState = Keyboard.GetState();
+            MouseState newMouseState = Mouse.GetState();
+
+            //process mouse move                                
+            if (oldMouseState.X != newMouseState.X)
+            {
+                if (newMouseState.X >= 0 || newMouseState.X < screenWidth)
+                {
+                    paddle.MoveTo(newMouseState.X);
+                }
+            }
+
+            //process keyboard events                           
+            if (newKeyboardState.IsKeyDown(Keys.Left))
+            {
+                paddle.MoveLeft();
+            }
+            if (newKeyboardState.IsKeyDown(Keys.Right))
+            {
+                paddle.MoveRight();
+            }
+
+            oldMouseState = newMouseState; // this saves the old state      
+            oldKeyboardState = newKeyboardState;
 
             base.Update(gameTime);
         }
-
+    
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
