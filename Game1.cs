@@ -16,10 +16,14 @@ namespace Arkanoid
         private Paddle paddle;
         private Wall wall;
         private GameBorder gameBorder;
+        private Ball ball;
+
         private int screenWidth = 0;
         private int screenHeight = 0;
         private MouseState oldMouseState;
         private KeyboardState oldKeyboardState;
+        private bool readyToServeBall = true;
+        private int ballsRemaining = 3;
 
         public Game1()
         {
@@ -68,6 +72,7 @@ namespace Arkanoid
             paddle = new Paddle(paddleX, paddleY, screenWidth, spriteBatch, gameContent);
             wall = new Wall(1, 50, spriteBatch, gameContent);
             gameBorder = new GameBorder(screenWidth, screenHeight, spriteBatch, gameContent);
+            ball = new Ball(screenWidth, screenHeight, spriteBatch, gameContent);
         }
 
         /// <summary>
@@ -107,6 +112,12 @@ namespace Arkanoid
                 }
             }
 
+            //process left-click
+            if (newMouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Pressed && oldMouseState.X == newMouseState.X && oldMouseState.Y == newMouseState.Y && readyToServeBall)
+            {
+                ServeBall();
+            }
+
             //process keyboard events                           
             if (newKeyboardState.IsKeyDown(Keys.Left))
             {
@@ -115,6 +126,10 @@ namespace Arkanoid
             if (newKeyboardState.IsKeyDown(Keys.Right))
             {
                 paddle.MoveRight();
+            }
+            if (oldKeyboardState.IsKeyUp(Keys.Space) && newKeyboardState.IsKeyDown(Keys.Space) && readyToServeBall)
+            {
+                ServeBall();
             }
 
             oldMouseState = newMouseState; // this saves the old state      
@@ -136,8 +151,35 @@ namespace Arkanoid
             paddle.Draw();
             wall.Draw();
             gameBorder.Draw();
+            if (ball.Visible)
+            {
+                bool inPlay = ball.Move(wall, paddle);
+                if (inPlay)
+                {
+                    ball.Draw();
+                }
+                else
+                {
+                    ballsRemaining--;
+                    readyToServeBall = true;
+                }
+            }
             spriteBatch.End(); 
             base.Draw(gameTime);
+        }
+
+        private void ServeBall()
+        {
+            if (ballsRemaining < 1)
+            {
+                ballsRemaining = 3;
+                ball.Score = 0;
+                wall = new Wall(1, 50, spriteBatch, gameContent);
+            }
+            readyToServeBall = false;
+            float ballX = paddle.X + (paddle.Width) / 2;
+            float ballY = paddle.Y - ball.Height;
+            ball.Launch(ballX, ballY, -3, -3);
         }
     }
 }
