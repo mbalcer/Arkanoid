@@ -11,6 +11,7 @@ namespace Arkanoid
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        GameContent gameContent;
 
         public Game1()
         {
@@ -41,6 +42,7 @@ namespace Arkanoid
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            gameContent = new GameContent(Content);
         }
 
         /// <summary>
